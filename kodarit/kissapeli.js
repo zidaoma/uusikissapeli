@@ -8,26 +8,46 @@ let lautanY = 350;
 let taustan_leveys =800;
 let taustan_korkeus = 400;
 
+  var kissalista = [];
+  var kissa_ajastin;
+
 function preload() {
   taustakuva = loadImage('https://igno.cc/opetus/kuvat/tausta.png');
   kissakuva = loadImage('https://igno.cc/opetus/kuvat/cat.png');
 }
 function setup() {
   var canvas = createCanvas(taustan_leveys, taustan_korkeus);
-
   kissa = new Kissa();
+
+  luo_kissoja();
+  angleMode(DEGREES);
 }
 
 function draw() {
   image(taustakuva, 0, 0, taustan_leveys, taustan_korkeus);
 
   luo_lautta();
-  kissa.liikuta();
+
+
+kissalista.forEach(function(kissa_olio, monesko) {
+  kissa_olio.liikuta();
+
+if (kissa_olio.Y < taustan_korkeus) {
+  kissalista.splice(monesko, 1);
+
+}
+})
 }
 
 function luo_lautta() {
   fill('red');
      rect(mouseX, taustan_korkeus - 50, lautan_leveys, 30, 30, 20, 0, 0 )
+}
+
+function luo_kissoja(){
+  let uusi_kisu = new Kissa();
+  kissalista.unshift(uusi_kisu);
+  ksisa_ajastin = setTimeout(luo_kissoja, 2000);
 }
 
 class Kissa {
@@ -38,19 +58,30 @@ constructor() {
   this.korkeus= 50;
   this.Xnopeus = 2;
   this.Ynopeus = -2;
+  this.kulma = 0;
   }
   liikuta() {
-    image(kissakuva, this.X, this.Y, this.leveys, this.korkeus)
+
 
     this.X += this.Xnopeus;
     this.Ynopeus += 0.05;
 
-if (this.Y += this.korkeus/ 2 > lautanY) {
+if (this.Y + (this.korkeus + 20)  > lautanY) {
   if(this.X > mouseX && this.X < mouseX + lautan_leveys) {
     this.Ynopeus = -abs(this.Ynopeus);
   }
 }
 
     this.Y += this.Ynopeus;
+
+    this.kulma += 1;
+
+    push();
+    translate(this.X, this.Y );
+    rotate(this.kulma);
+    imageMode(CENTER);
+
+    image(kissakuva, 0, 0, this.leveys, this.korkeus);
+    pop();
   }
 }
